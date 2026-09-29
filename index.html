@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ShieldTX | Privacy for Hyperliquid traders</title>
+  <meta name="description" content="Trade through fresh accounts while shielding the public link to your funding wallet.">
+  <link rel="preload" href="fonts/GeistPixel-Square.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="fonts/Geist-Regular.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz@9..40&display=swap">
+  <link rel="stylesheet" href="styles.css">
+  <script>document.documentElement.classList.add("js")</script>
+</head>
+<body>
+  <header class="header">
+    <div class="container header__inner">
+      <a class="brand" href="/" aria-label="ShieldTX home">
+        <img class="brand__mark" src="assets/shieldtx-mark.svg" width="24.6567" height="27.1621" alt="">
+        <span class="brand__word">ShieldTX</span>
+      </a>
+
+      <nav class="nav" id="nav" aria-label="Main navigation">
+        <a href="#how-it-works">How it works</a>
+        <a href="#terminal">The terminal</a>
+        <a href="#wallet-scanner">Wallet scanner <span class="arrow" aria-hidden="true">↗</span></a>
+      </nav>
+
+      <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="nav">
+        <span class="menu-toggle__label">Menu</span>
+        <span class="menu-toggle__icon" aria-hidden="true"></span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Dithered shader behind the whole page (hero-shader.js) -->
+  <canvas class="bg-shader" aria-hidden="true"></canvas>
+
+  <main>
+    <!-- Pinned intro: scrolling zooms into the shield (hero-shader.js, intro-scroll.js) -->
+    <section class="intro" aria-labelledby="hero-title">
+      <div class="hero">
+        <div class="hero__bg" aria-hidden="true"></div>
+        <div class="container hero__content" data-reveal="load">
+          <h1 class="hero__title dither" id="hero-title" data-delay="200">
+            <span class="line">Privacy for</span>
+            <span class="line">Hyperliquid traders.</span>
+          </h1>
+          <p class="hero__lede reveal" data-delay="1100">Trade through fresh accounts while shielding the public link to your funding wallet.</p>
+        </div>
+        <div class="hero__zoom">
+          <h2 class="zoom-title" id="what-it-helps-with">What ShieldTX helps with</h2>
+        </div>
+      </div>
+    </section>
+
+    <!-- Figma 283:2370 — the shield dissolves into the ambient field as this scrolls in.
+         Then it pins: scrolling steps Fund → Shield → Create → Execute (steps-scroll.js) while each
+         step's graphic hands over to the next (hero-shader.js). -->
+    <section class="helps" id="how-it-works" aria-labelledby="helps-title">
+      <div class="helps__stage">
+        <div class="container helps__inner" data-reveal="view">
+          <h2 class="helps__title dither" id="helps-title">
+            <span class="line">Fresh account.</span>
+            <span class="line">Shielded association.</span>
+          </h2>
+          <ol class="steps">
+            <li class="step is-open reveal" data-delay="600" data-graphic="wallet">
+              <h3 class="step__title"><button class="step__btn" type="button" aria-expanded="true" aria-controls="step-fund">Fund</button></h3>
+              <div class="step__body" id="step-fund"><p class="step__desc">Trade through fresh accounts while shielding the public link to your funding wallet.</p></div>
+            </li>
+            <li class="step reveal" data-delay="700" data-graphic="shield">
+              <h3 class="step__title"><button class="step__btn" type="button" aria-expanded="false" aria-controls="step-shield">Shield</button></h3>
+              <div class="step__body" id="step-shield"><p class="step__desc">ShieldTX separates your funding wallet from the account that trades.</p></div>
+            </li>
+            <li class="step reveal" data-delay="800" data-graphic="wallets">
+              <h3 class="step__title"><button class="step__btn" type="button" aria-expanded="false" aria-controls="step-create">Create</button></h3>
+              <div class="step__body" id="step-create"><p class="step__desc">A fresh account keeps your main wallet out of the public trading trail.</p></div>
+            </li>
+            <li class="step reveal" data-delay="900" data-graphic="bars">
+              <h3 class="step__title"><button class="step__btn" type="button" aria-expanded="false" aria-controls="step-execute">Execute</button></h3>
+              <div class="step__body" id="step-execute"><p class="step__desc">Execute on Hyperliquid and return proceeds to your ShieldTX balance.</p></div>
+            </li>
+          </ol>
+        </div>
+        <!-- Layout slot for the step graphic; the shader draws it here (hero-shader.js) -->
+        <div class="helps__visual" aria-hidden="true"></div>
+      </div>
+    </section>
+  </main>
+
+  <script src="text-reveal.js"></script>
+  <script src="intro-scroll.js"></script>
+  <script src="steps-scroll.js"></script>
+  <script src="hero-shader.js"></script>
+  <script>
+    const toggle = document.querySelector('.menu-toggle');
+    const header = document.querySelector('.header');
+    toggle.addEventListener('click', () => {
+      const open = header.classList.toggle('is-open');
+      toggle.setAttribute('aria-expanded', open);
+    });
+    document.querySelectorAll('.nav a').forEach(a => a.addEventListener('click', () => {
+      header.classList.remove('is-open');
+      toggle.setAttribute('aria-expanded', false);
+    }));
+  </script>
+</body>
+</html>

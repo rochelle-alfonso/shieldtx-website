@@ -1,0 +1,388 @@
+/* ShieldTX — values from Figma "Website Design", frame 283:1789 (1512 × 851) */
+
+@font-face {
+  font-family: "Geist Pixel Square";
+  src: url("fonts/GeistPixel-Square.woff2") format("woff2");
+  font-weight: 400;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Geist";
+  src: url("fonts/Geist-Regular.woff2") format("woff2");
+  font-weight: 400;
+  font-display: swap;
+}
+
+:root {
+  --ground: #f5f5f0;
+  --ink: #000;
+  --ink-soft: #1a1a1a;
+
+  --font-pixel: "Geist Pixel Square", "Geist Mono", ui-monospace, monospace;
+  --font-sans: "Geist", system-ui, -apple-system, sans-serif;
+
+  --page: 1280px;
+  --gutter: clamp(20px, 7.67vw, 116px); /* 116px at the 1512 artboard */
+  --header-h: 86px;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  background: var(--ground);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+a { color: inherit; text-decoration: none; }
+h1, p { margin: 0; }
+img { display: block; }
+
+.container {
+  width: min(var(--page), 100% - 2 * var(--gutter));
+  margin-inline: auto;
+}
+
+/* ---------- Header ---------- */
+.header {
+  position: fixed;
+  inset: 0 0 auto;
+  z-index: 10;
+}
+.header__inner {
+  display: flex;
+  align-items: center;
+  gap: 36px;
+  height: var(--header-h);
+}
+
+.brand {
+  display: flex;
+  align-items: flex-start;
+  gap: 5.87px;
+  flex-shrink: 0;
+}
+.brand__mark {
+  width: 24.657px;
+  height: 27.162px;
+  margin-top: 2.32px;
+}
+.brand__word {
+  font-family: var(--font-pixel);
+  font-size: 29.297px;
+  line-height: 31.641px;
+  letter-spacing: -0.047em;
+  color: var(--ink);
+  white-space: nowrap;
+}
+
+.nav {
+  display: flex;
+  align-items: center;
+  gap: 30px;
+  margin-left: auto;
+  padding-right: 24px;
+}
+.nav a {
+  padding-block: 12px;
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--ink-soft);
+  white-space: nowrap;
+  transition: opacity .2s ease;
+}
+.nav a:hover { opacity: .6; }
+.nav .arrow {
+  display: inline-block;
+  margin-left: 4px;
+  font-family: "DM Sans", var(--font-sans);
+  font-variation-settings: "opsz" 14;
+}
+
+.menu-toggle { display: none; }
+
+/* ---------- Intro: pinned hero that zooms into the shield ---------- */
+.intro {
+  --intro-scroll: 180svh; /* scroll distance the zoom plays over */
+  position: relative;
+  height: calc(max(100svh, 560px) + var(--intro-scroll));
+}
+
+/* ---------- Hero ---------- */
+.hero {
+  position: sticky;
+  top: 0;
+  display: flex;
+  align-items: flex-end;
+  height: max(100svh, 560px);
+  padding-top: var(--header-h);
+  /* 851 − 716 (lede bottom) = 135px at the artboard */
+  padding-bottom: clamp(56px, 8.93vw, 135px);
+  overflow: hidden;
+  isolation: isolate;
+}
+/* Static gradient: shown only without JS or WebGL2 */
+.hero__bg {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  background: url("assets/hero-gradient.jpg") center / cover no-repeat;
+  transform: scaleX(-1); /* the Figma layer is mirrored */
+}
+.js:not(.no-gl) .hero__bg { display: none; }
+
+/* Dithered shader behind the whole page (hero-shader.js) */
+.bg-shader {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  opacity: 0;
+  transition: opacity 1.2s ease;
+  pointer-events: none;
+}
+.bg-shader.is-ready { opacity: 1; }
+.no-gl .bg-shader { display: none; }
+main { position: relative; z-index: 1; }
+
+.hero__content {
+  display: flex;
+  flex-direction: column;
+  gap: 30px; /* 655 → 685 in the artboard */
+}
+.hero__title {
+  max-width: 719px;
+  font-family: var(--font-pixel);
+  font-weight: 400;
+  font-size: clamp(40px, 5.423vw, 82px); /* 82px at 1512 */
+  line-height: 1.08;
+  letter-spacing: -0.047em;
+}
+.hero__title .line { display: block; }
+.hero__content { will-change: opacity, transform; }
+
+/* Text entrances (text-reveal.js). Hidden until the block plays, so there's no
+   flash of static copy; without JS or with reduced motion everything just shows. */
+@media (prefers-reduced-motion: no-preference) {
+  .js [data-reveal]:not(.is-playing):not(.is-in) :is(.dither, .reveal) { opacity: 0; }
+}
+.dither .word { display: inline-block; white-space: nowrap; }
+.is-playing .dither .char {
+  opacity: 0;
+  animation: char-in 420ms steps(1, end) forwards;
+}
+@keyframes char-in {
+  0%   { opacity: 0; }
+  20%  { opacity: 1; }
+  40%  { opacity: .25; }
+  60%  { opacity: 1; }
+  75%  { opacity: .6; }
+  100% { opacity: 1; }
+}
+.is-playing .reveal {
+  opacity: 0;
+  animation: fade-up 900ms cubic-bezier(.16, 1, .3, 1) forwards;
+}
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(14px); filter: blur(6px); }
+  to   { opacity: 1; transform: none; filter: blur(0); }
+}
+
+/* "What ShieldTX helps with" — centred inside the zoomed shield */
+.hero__zoom {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: var(--header-h) var(--gutter); /* equal top and bottom so the heading sits on the screen centre */
+  pointer-events: none;
+  opacity: 0;
+  will-change: opacity, transform;
+}
+.zoom-title {
+  max-width: 8.77em; /* 719px at 82px */
+  margin: 0;
+  font-family: var(--font-pixel);
+  font-weight: 400;
+  font-size: clamp(40px, 5.423vw, 82px);
+  line-height: 1.08;
+  letter-spacing: -0.047em;
+  text-align: center;
+  text-wrap: balance;
+}
+.hero__lede {
+  max-width: 918px;
+  font-size: clamp(17px, 1.587vw, 24px); /* 24px at 1512 */
+  line-height: 1.3;
+}
+
+/* ---------- Fresh account. Shielded association (Figma 283:2370, 1512 × 851) ---------- */
+.helps {
+  --steps-scroll: 90svh; /* scroll distance per step change */
+  position: relative;
+  height: calc(max(100svh, 640px) + var(--steps-scroll) * var(--step-changes, 1)); /* --step-changes set by steps-scroll.js */
+}
+/* Pinned while the steps play (steps-scroll.js) */
+.helps__stage {
+  position: sticky;
+  top: 0;
+  height: max(100svh, 640px);
+  /* heading top at 136px on the artboard */
+  padding-top: clamp(112px, 9vw, 136px);
+}
+.helps__title {
+  max-width: 12em; /* fits "Shielded association." on one line */
+  margin: 0 auto;
+  font-family: var(--font-pixel);
+  font-weight: 400;
+  font-size: clamp(34px, 4.233vw, 64px); /* 64px at 1512 */
+  line-height: 1.3;
+  text-align: center;
+}
+.helps__title .line { display: block; }
+
+.steps {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(28px, 3.31vw, 50px); /* 50px between items */
+  max-width: 516px;
+  margin: clamp(48px, 5.36vw, 81px) 0 0; /* list starts at 383px */
+  padding: 0;
+  list-style: none;
+}
+.step__title {
+  margin: 0;
+  font-family: var(--font-pixel);
+  font-weight: 400;
+  font-size: clamp(24px, 2.116vw, 32px); /* 32px at 1512 */
+  line-height: 1.3;
+}
+.step__btn {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  letter-spacing: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.step__btn:focus-visible { outline: 2px solid currentColor; outline-offset: 4px; }
+
+/* Descriptions open and close smoothly (0fr ↔ 1fr) */
+.step__body {
+  display: grid;
+  grid-template-rows: 0fr;
+  opacity: 0;
+  transition: grid-template-rows .6s cubic-bezier(.16, 1, .3, 1), opacity .4s ease;
+}
+.step.is-open .step__body {
+  grid-template-rows: 1fr;
+  opacity: 1;
+  transition: grid-template-rows .6s cubic-bezier(.16, 1, .3, 1), opacity .5s ease .12s;
+}
+.step__body > * { min-height: 0; overflow: hidden; }
+/* Graphic slot: bottom right, bleeding off the edge (730 → 1482px wide, top at 490px on the artboard) */
+.helps__visual {
+  position: absolute;
+  left: 48.3%;
+  width: 49.7%;
+  top: 57.6%;
+  aspect-ratio: 0.92 / 0.56; /* wallet outline incl. clasp */
+  pointer-events: none;
+}
+
+.step__desc {
+  margin: 0;
+  padding-top: 12px;
+  font-size: 20px;
+  line-height: 1.3;
+  color: rgba(0, 0, 0, .65);
+}
+
+/* ---------- Tablet ---------- */
+@media (max-width: 900px) {
+  .hero__title { font-size: clamp(40px, 7.4vw, 64px); }
+  .hero__lede { max-width: 34em; font-size: clamp(17px, 2.3vw, 20px); }
+}
+
+/* Narrow: the steps take the full width, so the graphic tucks into the bottom right */
+@media (max-width: 900px) {
+  .helps__visual {
+    left: auto;
+    right: -12%;
+    top: auto;
+    bottom: -6%;
+    width: min(82%, 560px);
+  }
+}
+
+/* ---------- Mobile ---------- */
+@media (max-width: 720px) {
+  :root { --header-h: 68px; }
+
+  .brand__word { font-size: 24px; line-height: 26px; }
+  .brand__mark { width: 20.2px; height: 22.25px; margin-top: 1.9px; }
+
+  .menu-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    margin-left: auto;
+    padding: 12px 0;
+    border: 0;
+    background: none;
+    color: var(--ink-soft);
+    font: 12px/19.2px var(--font-sans);
+    cursor: pointer;
+  }
+  .menu-toggle__icon,
+  .menu-toggle__icon::before {
+    display: block;
+    width: 16px;
+    height: 1.5px;
+    background: currentColor;
+    transition: transform .25s ease;
+  }
+  .menu-toggle__icon { position: relative; transform: translateY(-3px); }
+  .menu-toggle__icon::before { content: ""; position: absolute; top: 6px; }
+  .header.is-open .menu-toggle__icon { transform: translateY(0) rotate(45deg); }
+  .header.is-open .menu-toggle__icon::before { transform: translateY(-6px) rotate(-90deg); }
+
+  .nav {
+    position: absolute;
+    top: var(--header-h);
+    left: var(--gutter);
+    right: var(--gutter);
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+    padding: 8px 20px;
+    background: rgba(245, 245, 240, .82);
+    -webkit-backdrop-filter: blur(16px);
+    backdrop-filter: blur(16px);
+    border: 1px solid rgba(0, 0, 0, .06);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-6px);
+    transition: opacity .2s ease, transform .2s ease, visibility 0s .2s;
+  }
+  .header.is-open .nav {
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+    transition: opacity .2s ease, transform .2s ease;
+  }
+  .nav a { padding-block: 14px; }
+  .nav a + a { border-top: 1px solid rgba(0, 0, 0, .08); }
+
+  /* keep the blue ring in frame on a portrait crop (fallback image) */
+  .hero__bg { background-position: 30% center; }
+  .hero__content { gap: 20px; }
+  .hero__title { font-size: clamp(36px, 10.6vw, 52px); letter-spacing: -0.04em; }
+  .hero__lede { font-size: 17px; }
+}
